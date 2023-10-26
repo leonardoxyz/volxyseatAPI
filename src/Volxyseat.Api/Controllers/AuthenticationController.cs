@@ -82,7 +82,8 @@ namespace Volxyseat.Api.Controllers
                     return BadRequest();
                 }
 
-                return Ok();
+                var jwtToken = GenerateJwtToken(existingUser);
+                return Ok(new { token = jwtToken, username = existingUser.UserName });
             }
 
             return BadRequest();
