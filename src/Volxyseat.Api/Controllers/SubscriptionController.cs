@@ -8,9 +8,12 @@ using Volxyseat.Infrastructure.Repository;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Volxyseat.Infrastructure.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Volxyseat.Api.Controllers
 {
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("api/[controller]")]
     public class SubscriptionController : ControllerBase

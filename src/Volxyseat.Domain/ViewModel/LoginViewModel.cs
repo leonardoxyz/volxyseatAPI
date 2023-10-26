@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Volxyseat.Domain.ViewModel
 {
-    internal class LoginViewModel
+    public class LoginViewModel
     {
         [Required]
         public string Email { get; set; }

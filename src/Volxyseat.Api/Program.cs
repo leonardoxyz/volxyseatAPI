@@ -7,6 +7,10 @@ using Volxyseat.Domain.Models.SubscriptionModel;
 using Volxyseat.Infrastructure.Data;
 using Volxyseat.Infrastructure.Profiles;
 using Volxyseat.Infrastructure.Repository;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Volxyseat.Infrastructure.Configurations;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,11 +21,36 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDataContext>(options =>
-options.UseSqlite(builder.Configuration.GetConnectionString("DefaultContext"))) ;
+options.UseSqlite(builder.Configuration.GetConnectionString("DefaultContext")));
 
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedPhoneNumber = false)
+    .AddEntityFrameworkStores<ApplicationDataContext>();
+builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection(key: "JwtConfig"));
+builder.Services.AddSingleton<JwtConfig>();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(jwt =>
+{
+    var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection(key: "JwtConfig:Secret").Value);
+
+    jwt.SaveToken = true;
+    jwt.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false, //dev
+        ValidateAudience = false, //dev
+        RequireExpirationTime = false, //dev
+        ValidateLifetime = true
+    };
+});
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
@@ -48,13 +77,14 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowSpecificOrigin",
-        builder => builder
+    options.AddDefaultPolicy(builder =>
+    {
+        builder
             .WithOrigins("http://localhost:4200")
             .AllowAnyHeader()
-            .AllowAnyMethod());
+            .AllowAnyMethod();
+    });
 });
-
 
 var app = builder.Build();
 
@@ -67,10 +97,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// Use the default CORS policy that you defined
+app.UseCors();
+
 app.UseAuthorization();
-
-app.UseCors("AllowSpecificOrigin");
-
 app.MapControllers();
-
 app.Run();
