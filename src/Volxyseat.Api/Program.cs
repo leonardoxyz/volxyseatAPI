@@ -99,6 +99,7 @@ app.UseHttpsRedirection();
 
 // Use the default CORS policy that you defined
 app.UseCors();
+app.UseMiddleware<InvalidTokenMiddleware>();
 
 app.UseAuthorization();
 app.MapControllers();

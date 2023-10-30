@@ -15,6 +15,9 @@ using System;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Volxyseat.Domain.Models.AuthModel;
 
 namespace Volxyseat.Api.Controllers
 {
@@ -25,16 +28,20 @@ namespace Volxyseat.Api.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly JwtConfig _jwtConfig;
         private readonly IConfiguration _configuration;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private List<InvalidToken> _invalidTokens = new List<InvalidToken>();
 
         public AuthenticationController(
             UserManager<IdentityUser> userManager,
             JwtConfig jwtConfig,
-            IConfiguration configuration
+            IConfiguration configuration,
+            SignInManager<IdentityUser> signInManager
         )
         {
             _userManager = userManager;
             _jwtConfig = jwtConfig;
             _configuration = configuration;
+            _signInManager = signInManager;
         }
 
         [HttpPost]
@@ -87,6 +94,17 @@ namespace Volxyseat.Api.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpPost]
+        [Route("logout")]
+        public IActionResult Logout()
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            _invalidTokens.Add(new InvalidToken { TokenId = token });
+
+            return Ok(new { message = "Logout bem-sucedido" });
         }
 
         [HttpGet]

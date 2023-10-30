@@ -93,6 +93,7 @@ namespace Volxyseat.Api.Controllers
             existingSubscription.Type = request.Type;
             existingSubscription.Price = request.Price;
             existingSubscription.Description = request.Description;
+            existingSubscription.IsPopular = request.IsPopular;
             
             _subscriptionRepository.Update(existingSubscription);
             await _uow.SaveChangesAsync();
