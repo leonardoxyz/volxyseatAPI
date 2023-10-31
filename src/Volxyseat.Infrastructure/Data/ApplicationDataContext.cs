@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Volxyseat.Domain;
 using Volxyseat.Domain.Core.Data;
-using Volxyseat.Domain.Models.ClientModel;
 using Volxyseat.Domain.Models.SubscriptionModel;
 
 namespace Volxyseat.Infrastructure.Data
@@ -19,7 +18,6 @@ namespace Volxyseat.Infrastructure.Data
         {
         }
 
-        public DbSet<Client> Clients { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Volxyseat.Domain.Core.Data;
-using Volxyseat.Domain.Models.ClientModel;
 using Volxyseat.Domain.Models.SubscriptionModel;
 using Volxyseat.Domain.ViewModel;
 using Volxyseat.Infrastructure.Repository;
@@ -93,7 +92,6 @@ namespace Volxyseat.Api.Controllers
             existingSubscription.Type = request.Type;
             existingSubscription.Price = request.Price;
             existingSubscription.Description = request.Description;
-            existingSubscription.IsPopular = request.IsPopular;
             
             _subscriptionRepository.Update(existingSubscription);
             await _uow.SaveChangesAsync();

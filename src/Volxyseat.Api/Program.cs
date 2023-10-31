@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Volxyseat.Domain.Core.Data;
-using Volxyseat.Domain.Models.ClientModel;
 using Volxyseat.Domain.Models.SubscriptionModel;
 using Volxyseat.Infrastructure.Data;
 using Volxyseat.Infrastructure.Profiles;
@@ -23,7 +22,6 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDataContext>(options =>
 options.UseSqlite(builder.Configuration.GetConnectionString("DefaultContext")));
 
-builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
